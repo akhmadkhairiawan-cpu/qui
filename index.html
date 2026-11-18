@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QUIZ CLASH</title>
+<style>
+/* ===== DASAR & SKALA PID 1920x1080 ===== */
+:root{--navy:#0a1030;--blue:#2f6bff;--red:#ff3b4e;--gold:#ffc83d;--green:#22d081;--purple:#8a4dff;color-scheme:dark}
+*{box-sizing:border-box;margin:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#050818;font-family:"Segoe UI",Arial,sans-serif;color:#fff}
+img{-webkit-user-drag:none;pointer-events:none}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;background:radial-gradient(ellipse at 50% 0,#2a2f8f 0,var(--navy) 60%,#04061a);overflow:hidden}
+.pg{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px 60px;gap:22px;background-size:cover;background-position:center}
+.pg.on{display:flex;animation:fi .6s ease}
+@keyframes fi{from{opacity:0;transform:scale(.96) translateY(14px)}}
+.fbk{font-size:80px;display:inline-block}
+/* ===== TOMBOL UMUM ===== */
+.btn{min-width:280px;min-height:88px;padding:0 56px;font-size:44px;font-weight:900;color:#fff;border:0;border-radius:28px;background:linear-gradient(#5b8cff,var(--blue));box-shadow:0 10px 0 #1b3fa8,0 0 30px #2f6bff88;cursor:pointer;transition:.1s;position:relative;z-index:3}
+.btn:active{transform:translateY(8px);box-shadow:0 2px 0 #1b3fa8}
+.btn.g{background:linear-gradient(#4ff0a8,var(--green));box-shadow:0 10px 0 #0e7a4b,0 0 30px #22d08188}
+.pulse{animation:pls 1.6s ease-in-out infinite}
+@keyframes pls{50%{transform:scale(1.06)}}
+.fs{position:absolute;right:22px;top:18px;width:80px;height:80px;border:0;background:none;cursor:pointer;z-index:40;padding:0}
+.fs img{width:100%;height:100%;object-fit:contain}
+.fs.sn{right:118px;font-size:56px;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1}
+/* ===== KELOMPOK TOMBOL ===== */
+.foot{display:flex;flex-direction:column;align-items:center;gap:26px}
+.foot.bot{margin-top:auto}
+.acts{display:flex;gap:48px;justify-content:center;align-items:center;margin-top:4px}
+.acts .btn{min-width:340px}
+/* ===== HALAMAN 1: INTRO ===== */
+.logo{height:470px;animation:fl 3.2s ease-in-out infinite;filter:drop-shadow(0 0 40px #ffc83d88)}
+@keyframes fl{50%{transform:translateY(-14px)}}
+.tagimg{width:720px}
+.dev{font-size:42px;font-weight:800;color:#fff;background:#0a1030ec;border:3px solid var(--gold);border-radius:44px;padding:10px 44px;text-shadow:0 2px 4px #000;box-shadow:0 6px 20px #000a}
+.side{position:absolute;bottom:70px;height:520px;filter:drop-shadow(0 12px 18px #000a);animation:fl 3s ease-in-out infinite}
+.side.l{left:90px}.side.r{right:90px;animation-delay:-1.5s}
+/* ===== HALAMAN 2: ATURAN ===== */
+h2{font-size:80px;font-weight:900;color:var(--gold);text-shadow:0 6px 0 #7a4a00,0 0 30px #000;-webkit-text-stroke:7px #0a1030;paint-order:stroke fill;}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:1740px}
+.card{background:linear-gradient(#1c2a78,#121a52);border:3px solid #4b6bff;border-radius:28px;padding:18px 26px;font-size:34px;line-height:1.3;font-weight:600;box-shadow:0 8px 24px #0008}
+.card b{color:var(--gold);font-size:40px;margin-right:8px}
+.card img{height:46px;vertical-align:middle;margin-left:6px}
+.hint{font-size:32px;color:#fff;font-weight:800;background:#0a1030ec;border:2px solid #4b6bff;border-radius:30px;padding:8px 34px}
+/* ===== HALAMAN 3: IDENTITAS ===== */
+.ids{display:flex;gap:56px}
+.idc{width:780px;padding:22px 28px;border-radius:36px;display:flex;flex-direction:column;gap:12px;align-items:center;backdrop-filter:blur(4px)}
+.idc.p1{background:linear-gradient(#1d3fa8f0,#0f2266f0);border:4px solid var(--blue);box-shadow:0 0 40px #2f6bff88}
+.idc.p2{background:linear-gradient(#a81d2ef0,#66101af0);border:4px solid var(--red);box-shadow:0 0 40px #ff3b4e88}
+.lab{font-size:38px;font-weight:900;letter-spacing:4px}
+.row{display:flex;gap:20px;align-items:center;width:100%}
+.big{width:250px;height:300px;display:flex;align-items:flex-end;justify-content:center;background:radial-gradient(circle,#fff3,#fff0 70%);border-radius:30px}
+.big img{max-width:100%;max-height:100%;filter:drop-shadow(0 8px 10px #0008);animation:fl 3s ease-in-out infinite}
+.grid{display:grid;grid-template-columns:repeat(4,100px);gap:10px}
+.th{width:100px;height:100px;border-radius:22px;border:4px solid #fff5;background:#0a1030aa;display:flex;align-items:flex-end;justify-content:center;cursor:pointer;position:relative;padding:4px;transition:.12s}
+.th img{max-width:100%;max-height:100%}
+.th.sel{border-color:var(--gold);background:#ffc83d44;box-shadow:0 0 18px var(--gold)}
+.th.off{opacity:.3;filter:grayscale(1);cursor:not-allowed}
+.th:active{transform:scale(.94)}
+input{width:100%;height:84px;font-size:40px;font-weight:800;text-align:center;border-radius:22px;border:4px solid #fff;background:#0a1030;color:#fff;outline:0;user-select:text;-webkit-user-select:text}
+.pv{font-size:42px;font-weight:900;min-height:52px;text-shadow:0 3px 6px #000}
+.err{color:var(--gold);font-size:36px;font-weight:800;min-height:44px}.err:not(:empty){background:#0a1030ec;border:2px solid var(--gold);border-radius:28px;padding:4px 30px}
+/* ===== HALAMAN 4: ARENA ===== */
+#arena{padding:0;gap:0;justify-content:flex-start}
+#arena::before{content:"";position:absolute;inset:0;background:linear-gradient(#050a2acc,#050a2a88 40%,#050a2acc)}
+#arena>*{position:relative;z-index:2}
+#arena.shk{animation:shk .45s}
+@keyframes shk{20%{transform:translate(-14px,6px)}40%{transform:translate(12px,-8px)}60%{transform:translate(-8px,4px)}80%{transform:translate(6px,-3px)}}
+.hd{width:100%;height:110px;display:flex;align-items:center;justify-content:space-between;padding:0 230px 0 40px}
+.hd img.lg{height:100px}
+.hd .no{font-size:46px;font-weight:900;background:#0a1030ec;border:3px solid #4b6bff;border-radius:44px;padding:4px 40px}
+.tm{font-size:58px;font-weight:900;min-width:190px;height:86px;border-radius:43px;background:#0a1030f2;border:4px solid var(--gold);display:flex;align-items:center;justify-content:center;gap:10px}
+.tm img{height:62px}
+.tm.lo{border-color:var(--red);color:var(--red);animation:pl .5s infinite}
+@keyframes pl{50%{transform:scale(1.12)}}
+.main{display:grid;grid-template-columns:480px 820px 480px;gap:30px;padding:0 40px 28px;width:100%;flex:1}
+.pp{border-radius:36px;padding:14px 20px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;backdrop-filter:blur(3px)}
+.pp.p1{background:linear-gradient(#1d3fa8cc,#0f2266cc);border:4px solid var(--blue)}
+.pp.p2{background:linear-gradient(#a81d2ecc,#66101acc);border:4px solid var(--red)}
+.pp.act{box-shadow:0 0 0 6px var(--gold),0 0 60px var(--gold)}
+.plate{position:relative;width:400px;height:355px;flex:none}
+.plate .pl{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.plate .ch{position:absolute;left:50%;top:-6px;height:270px;transform:translateX(-50%);filter:drop-shadow(0 8px 8px #0009);transition:.2s}
+.plate .ch.pop{animation:pop .5s}
+@keyframes pop{40%{transform:translateX(-50%) scale(1.15)}}
+.plate .nm{position:absolute;left:62px;right:62px;bottom:46px;height:84px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;text-align:center;line-height:1;word-break:break-word;color:#fff;-webkit-text-stroke:7px #0a1030;paint-order:stroke fill;}
+.hr{display:flex;gap:6px;height:72px;align-items:center}
+.hr .h{width:64px;height:62px;display:flex;align-items:center;justify-content:center;font-size:48px}
+.hr .h img{max-width:100%;max-height:100%}
+.hr .h.dim{opacity:.18;filter:grayscale(1)}
+.hr .h.br{animation:br .9s forwards}
+@keyframes br{30%{transform:rotate(-20deg) scale(1.5)}100%{transform:scale(.2);opacity:0}}
+.st{font-size:33px;font-weight:800;color:#fff;min-height:44px;text-align:center}.st:not(:empty){background:#0a1030ee;border-radius:22px;padding:2px 18px}
+.sc{font-size:31px;font-weight:800;color:#fff;background:#0a1030ee;border-radius:22px;padding:2px 18px}
+.bell{width:300px;height:214px;border:0;background:none;cursor:pointer;padding:0;flex:none}
+.bell img{width:100%;height:100%;object-fit:contain;transition:.08s}
+.bell.on img{animation:wob 1s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg) scale(1.04)}}
+.bell:disabled{cursor:default}
+.mid{display:flex;flex-direction:column;gap:22px}
+.q{flex:1;border-radius:36px;background:linear-gradient(#26359aee,#151f66ee);border:4px solid var(--purple);box-shadow:0 0 40px #8a4dff66;padding:12px 36px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;text-align:center;position:relative}
+.qh{position:relative;width:340px;height:108px;flex:none}
+.qh img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.qh small{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:var(--gold);letter-spacing:4px;-webkit-text-stroke:7px #0a1030;paint-order:stroke fill;}
+.q p{font-size:54px;font-weight:900;line-height:1.2;flex:1;display:flex;align-items:center}
+.stat{height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:none}
+.stat img{width:560px;height:auto;animation:pop2 .5s}
+@keyframes pop2{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}}
+.pill{font-size:40px;font-weight:900;padding:8px 36px;border-radius:30px;background:#0a1030;border:3px solid #4b6bff}
+.pill.p1{background:var(--blue);border-color:#fff}.pill.p2{background:var(--red);border-color:#fff}
+.ans{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:150px;gap:22px 22px;flex:none}
+.ab{position:relative;width:399px;height:125px;align-self:center;border:0;background:none;cursor:pointer;padding:0;transition:.1s}
+.ab img{position:absolute;inset:0;width:100%;height:100%}
+.ab .t{position:absolute;left:92px;right:24px;top:14px;bottom:14px;display:flex;align-items:center;font-size:38px;font-weight:900;line-height:1.05;color:#fff;-webkit-text-stroke:9px #0a1030;paint-order:stroke fill;text-align:left}
+.ab .fl{position:absolute;left:16px;top:20px;width:76px;text-align:center;font-size:50px;font-weight:900;color:#222;display:none}
+.ab.nolt .fl{display:block}
+.ab:active:not(:disabled){transform:translateY(5px) scale(.98)}
+.ab:disabled{cursor:default;filter:brightness(.85) grayscale(.15)}
+.ab.c{filter:none!important;animation:okb .6s ease infinite alternate}
+@keyframes okb{to{filter:drop-shadow(0 0 22px #3dff9a) brightness(1.2)}}
+.ab.w{filter:drop-shadow(0 0 22px #ff3b4e) saturate(.6)!important}
+.nxw{height:96px;display:flex;align-items:center;justify-content:center;flex:none}
+.nx{min-width:280px;min-height:88px;padding:0 44px;font-size:42px;visibility:hidden;animation:pls 1.2s ease-in-out infinite}.nx.on{visibility:visible}
+.fxi{position:absolute!important;pointer-events:none;z-index:30}
+#cd{position:absolute!important;inset:0;display:none;align-items:center;justify-content:center;z-index:60;background:#050a2acc;font-size:300px;font-weight:900;color:var(--gold);text-shadow:0 12px 0 #7a4a00,0 0 60px #ffc83d}
+#cd.on{display:flex}
+#cd span{animation:cdp .9s ease-out}
+@keyframes cdp{from{transform:scale(2.4);opacity:0}30%{opacity:1}to{transform:scale(1)}}
+/* ===== HALAMAN 5: HASIL ===== */
+#p5{gap:12px;justify-content:flex-start;padding-top:10px;overflow:hidden}
+#p5::before{content:"";position:absolute;inset:0;background:#050a2a55}
+#p5>*{position:relative;z-index:2}
+.bn{height:190px;filter:drop-shadow(0 0 30px #ffc83d);animation:fl 2.4s ease-in-out infinite}
+.stg{position:relative;width:1300px;height:520px;flex:none}
+.stg>*{position:absolute}
+.stg .pod{left:330px;bottom:0;width:640px}
+.stg .ch{filter:drop-shadow(0 10px 10px #000a)}
+.stg .aura{left:480px;width:340px;top:-20px;animation:pls 2s infinite}
+.stg .tr{left:60px;bottom:30px;height:230px;animation:fl 3s infinite}
+.stg .md{left:1090px;bottom:40px;height:150px;animation:fl 2.6s infinite}
+.stg .cr{left:1010px;bottom:10px;height:120px;animation:fl 2.2s infinite}
+.fall{position:absolute!important;left:0;top:-40px;width:1920px;opacity:.9;z-index:1!important;animation:fall 5s linear infinite}
+@keyframes fall{from{transform:translateY(-120px)}to{transform:translateY(160px)}}
+.fw{position:absolute!important;width:520px;z-index:1!important;animation:pls 1.8s infinite}
+.res{display:flex;gap:40px}
+.rc{width:580px;padding:12px 18px;border-radius:26px;text-align:center;font-size:36px;font-weight:800;line-height:1.35;background:#0a1030f2}
+.rc.p1{border:4px solid var(--blue)}.rc.p2{border:4px solid var(--red)}
+.rc.w{box-shadow:0 0 0 6px var(--gold),0 0 40px var(--gold)}
+.rc img{height:34px;vertical-align:middle}
+.pt{position:absolute!important;width:14px;height:14px;border-radius:3px;animation:pt 3s linear forwards;z-index:30}
+@keyframes pt{to{transform:translateY(1200px) rotate(720deg)}}
+</style></head><body>
+<div id="stage">
+<button class="fs" onclick="fs()" aria-label="Layar penuh" id="fsb"></button>
+<button class="fs sn" id="snd" onclick="toggleMute()" aria-label="Suara">🔊</button>
+
+<!-- HALAMAN 1 -->
+<section class="pg on" id="p1" data-bg="bg-intro">
+<div id="sideL"></div><div id="sideR"></div>
+<div id="logoBox"></div><div id="tagBox"></div>
+<div class="foot"><div class="dev">Pengembang: Akhmad Khairiawan, S.Pd</div>
+<button class="btn pulse" onclick="go('p2')">LANJUT</button></div>
+</section>
+
+<!-- HALAMAN 2 -->
+<section class="pg" id="p2" data-bg="bg-aturan">
+<h2>ATURAN QUIZ CLASH</h2>
+<div class="cards" id="rules"></div>
+<div class="foot bot"><div class="hint">Papan keyboard: Player 1 tekan Q, Player 2 tekan P untuk bel</div>
+<button class="btn pulse" onclick="go('p3')">LANJUT</button></div>
+</section>
+
+<!-- HALAMAN 3 -->
+<section class="pg" id="p3" data-bg="bg-identitas">
+<h2>IDENTITAS PEMAIN</h2>
+<div class="ids" id="ids"></div>
+<div class="foot"><div class="err" id="err"></div>
+<button class="btn g" onclick="start()">MULAI PERMAINAN</button></div>
+</section>
+
+<!-- HALAMAN 4 -->
+<section class="pg" id="arena" data-bg="bg-arena">
+<div class="hd"><div id="hdLogo"></div><div class="no" id="no">SOAL 1/10</div><div class="tm" id="tm"><span id="tmI"></span><span id="tmv">10</span></div></div>
+<div class="main">
+<div class="pp p1" id="pp1"><div class="plate" id="pl1"></div><div class="hr" id="h1"></div><div class="sc" id="s1"></div><div class="st" id="t1"></div><button class="bell" id="b1" onclick="buzz(0)"></button></div>
+<div class="mid">
+<div class="q"><div class="qh"><span id="qhI"></span><small id="qn">SOAL 01</small></div><div class="stat" id="stat"></div><p id="qt"></p><div class="nxw"><button class="btn g nx" id="nx" onclick="goNext()">LANJUT ▶</button></div></div>
+<div class="ans" id="ans"></div>
+</div>
+<div class="pp p2" id="pp2"><div class="plate" id="pl2"></div><div class="hr" id="h2"></div><div class="sc" id="s2"></div><div class="st" id="t2"></div><button class="bell" id="b2" onclick="buzz(1)"></button></div>
+</div>
+<div id="cd"><span id="cdn">3</span></div>
+</section>
+
+<!-- HALAMAN 5 -->
+<section class="pg" id="p5" data-bg="bg-hasil"></section>
+</div>
+
+<script>
+/* ===== ASET: path folder assets/ ATAU data base64 (versi satu file) ===== */
+const DATA=window.__A||{};
+const P=n=>DATA[n]||`assets/${n}.webp`;
+const fbk=el=>{const s=document.createElement("span");s.textContent=el.alt;s.className="fbk";el.replaceWith(s)};
+const IMG=(n,fb="",cls="",st="",id="")=>`<img ${id?`id="${id}"`:""} class="${cls}" src="${P(n)}" alt="${fb}" style="${st}" draggable="false" onerror="fbk(this)">`;
+const NAMES=["logo","tagline","bel-aktif","bel-tertekan","bel-terkunci","tombol-a","tombol-b","tombol-c","tombol-d","panel-soal","banner-giliran","banner-benar","banner-salah","banner-waktu-habis","banner-pemenang","banner-seri","fx-ledakan","fx-bola-biru","fx-bola-merah","fx-centang","fx-silang","fx-serpihan-hati","fx-aura","fx-konfeti","fx-kembang-api","podium","ikon-hati-penuh","ikon-hati-retak","ikon-hati-pecah","ikon-timer","ikon-panel-biru","ikon-panel-merah","ikon-layar-penuh","ikon-piala","ikon-medali","ikon-mahkota","ikon-bintang"];
+const AV=[["robot","Robot","🤖"],["rubah","Rubah","🦊"],["kucing","Kucing","🐱"],["naga","Naga","🐲"],["singa","Singa","🦁"],["panda","Panda","🐼"],["garuda","Garuda","🦅"],["anak","Anak SD","🧒"]];
+const EXP=["normal","senang","sedih"];
+/* preload semua gambar di depan */
+[...NAMES,...BGS()].forEach(n=>{const i=new Image();i.src=P(n)});
+AV.forEach(a=>EXP.forEach(e=>{const i=new Image();i.src=P(`${a[0]}-${e}`)}));
+function BGS(){return["bg-intro","bg-aturan","bg-identitas","bg-arena","bg-hasil"]}
+document.querySelectorAll("[data-bg]").forEach(e=>{e.style.backgroundImage=`url("${P(e.dataset.bg)}")`});
+const avImg=(p,e,cls="",st="",id="")=>{const a=AV[SEL[p]];return IMG(`${a[0]}-${e}`,a[2],cls,st,id)};
+
+const $=id=>document.getElementById(id);
+let names=["",""],S,SEL=[0,1];
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);$("stage").style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener("resize",fit);fit();
+function fs(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}}
+function go(id){document.querySelectorAll(".pg").forEach(p=>p.classList.remove("on"));$(id).classList.add("on");sfx(500,.08);setTrack(id==="arena"?"soal":id==="p5"?"akhir":"intro")}
+
+/* ===== BANGUN HALAMAN STATIS ===== */
+$("fsb").innerHTML=IMG("ikon-layar-penuh","⛶");
+$("logoBox").innerHTML=IMG("logo","QUIZ CLASH","logo");
+$("tagBox").innerHTML=IMG("tagline","THINK FAST. ANSWER SMART. WIN!","tagimg");
+$("sideL").innerHTML=IMG("robot-senang","🤖","side l");
+$("sideR").innerHTML=IMG("rubah-senang","🦊","side r");
+$("hdLogo").innerHTML=IMG("logo","QUIZ CLASH","lg");
+$("tmI").innerHTML=IMG("ikon-timer","⏱️");
+$("qhI").innerHTML=IMG("panel-soal","");
+$("rules").innerHTML=[
+["Dimainkan oleh tepat 2 pemain."],
+["Setiap pemain mendapat 5 nyawa",IMG("ikon-hati-penuh","❤️")],
+["Soal pilihan ganda tampil satu per satu."],
+["Berlomba menekan tombol BEL",IMG("bel-aktif","🔔")],
+["Pemain tercepat berhak menjawab."],
+["Waktu menjawab 10 detik. Pilihan A, B, C, D.",IMG("ikon-timer","⏱️")],
+["Jawaban benar: nyawa lawan berkurang 1.",IMG("ikon-bintang","⭐")],
+["Jawaban salah atau waktu habis: nyawamu berkurang 1.",IMG("ikon-hati-pecah","💔")],
+["Nyawa habis = kalah. Selesai jika ada yang kalah atau 10 soal habis.",IMG("ikon-piala","🏆")]
+].map((r,i)=>`<div class="card"><b>${i+1}</b>${r[0]}${r[1]||""}</div>`).join("");
+
+/* ===== HALAMAN IDENTITAS + PILIH AVATAR ===== */
+function buildIds(){
+ $("ids").innerHTML=[0,1].map(p=>`<div class="idc p${p+1}"><div class="lab">PLAYER ${p+1}</div>
+ <div class="row"><div class="big" id="big${p}">${avImg(p,"normal")}</div>
+ <div class="grid">${AV.map((a,i)=>`<div class="th ${SEL[p]===i?"sel":""} ${SEL[1-p]===i?"off":""}" onclick="pickAv(${p},${i})">${IMG(a[0]+"-normal",a[2])}</div>`).join("")}</div></div>
+ <input id="n${p+1}" maxlength="14" placeholder="Nama pemain / tim" oninput="pv()" value="${names[p]||""}">
+ <div class="pv" id="v${p+1}">${names[p]||""}</div></div>`).join("")}
+function pickAv(p,i){if(SEL[1-p]===i){sfx(200,.15,"square",.08);return}SEL[p]=i;sfx(660,.1);const n=[$("n1").value,$("n2").value];names=n;buildIds()}
+function pv(){$("v1").textContent=$("n1").value.trim();$("v2").textContent=$("n2").value.trim();$("err").textContent=""}
+buildIds();
+
+/* ===== AUDIO: efek suara + backsound (Web Audio, dibuat langsung di browser) ===== */
+let ac=null,MA=null,nBuf=null,muted=false,mus=null,curTrack="intro";
+function AC(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)();MA=ac.createGain();MA.gain.value=muted?0:1;MA.connect(ac.destination);const n=ac.createBuffer(1,ac.sampleRate*.5,ac.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;nBuf=n}catch(e){return null}}if(ac.state==="suspended")ac.resume();return ac}
+function sfx(f,d,t="sine",g=.15){try{const c=AC();if(!c)return;const o=c.createOscillator(),v=c.createGain();o.type=t;o.frequency.value=f;v.gain.value=g;o.connect(v);v.connect(MA);o.start();v.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)}catch(e){}}
+function noiseSfx(f0,f1,d,type,g){try{const c=AC();if(!c)return;const s=c.createBufferSource(),fl=c.createBiquadFilter(),v=c.createGain(),t=c.currentTime;s.buffer=nBuf;fl.type=type;fl.frequency.setValueAtTime(f0,t);fl.frequency.exponentialRampToValueAtTime(f1,t+d);v.gain.setValueAtTime(g,t);v.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(fl);fl.connect(v);v.connect(MA);s.start(t);s.stop(t+d)}catch(e){}}
+function seq(a){a.forEach((f,i)=>setTimeout(()=>sfx(f,.18,"triangle"),i*130))}
+/* backsound: 3 lagu berbeda -> intro (menu), soal (arena), akhir (hasil) */
+const TR={
+ intro:{bpm:96,ch:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],bass:[48,45,41,43],arp:"triangle",hat:0,g:.22},
+ soal:{bpm:128,ch:[[57,60,64],[53,57,60],[48,52,55],[55,59,62]],bass:[45,41,36,43],arp:"square",hat:1,g:.13},
+ akhir:{bpm:116,ch:[[60,64,67],[65,69,72],[67,71,74],[60,64,67]],bass:[48,53,55,48],arp:"triangle",hat:1,g:.2}};
+const mf=n=>440*Math.pow(2,(n-69)/12);
+function tone(dst,f,t,d,type,v){const c=ac,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(dst);o.start(t);o.stop(t+d+.05)}
+function hatAt(dst,t){const c=ac,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=nBuf;f.type="highpass";f.frequency.value=7000;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);s.connect(f);f.connect(g);g.connect(dst);s.start(t,Math.random()*.3);s.stop(t+.06)}
+function schedMus(m){const c=ac;if(!c)return;const k=m.cfg,sp=60/k.bpm/2;
+ if(m.next<c.currentTime)m.next=c.currentTime+.05;
+ while(m.next<c.currentTime+.25){const s=m.step,bar=(s>>3)&3,pos=s&7,t=m.next,ch=k.ch[bar];
+  if(pos===0)ch.forEach(n=>tone(m.gain,mf(n),t,sp*8,"sine",.05));
+  if(pos%4===0)tone(m.gain,mf(k.bass[bar]),t,sp*3.5,"triangle",.5);
+  tone(m.gain,mf(ch[s%3]+(bar%2?12:0)),t,sp*.85,k.arp,.09);
+  if(k.hat&&pos%2===1)hatAt(m.gain,t);
+  m.step++;m.next+=sp}}
+function playMus(name){const c=AC();if(!c||(mus&&mus.name===name))return;
+ if(mus){const o=mus;o.gain.gain.setTargetAtTime(0,c.currentTime,.2);clearInterval(o.timer);setTimeout(()=>o.gain.disconnect(),1500)}
+ mus=null;if(!name)return;
+ const g=c.createGain();g.gain.value=0;g.gain.setTargetAtTime(TR[name].g,c.currentTime,.4);g.connect(MA);
+ mus={name,cfg:TR[name],gain:g,step:0,next:c.currentTime+.1,timer:null};
+ mus.timer=setInterval(()=>schedMus(mus),40)}
+function setTrack(n){curTrack=n;playMus(n)}
+function toggleMute(){muted=!muted;const c=AC();if(c)MA.gain.setTargetAtTime(muted?0:1,c.currentTime,.05);$("snd").textContent=muted?"🔇":"🔊"}
+/* browser baru mengizinkan suara setelah interaksi pertama pengguna */
+["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>{AC();playMus(curTrack)}));
+
+/* ===== BANK SOAL + RIWAYAT LOCALSTORAGE ===== */
+const BANK=[["Bilangan prima adalah bilangan asli lebih dari 1 yang memiliki ....", ["tepat satu faktor", "tepat dua faktor", "tiga faktor", "lebih dari tiga faktor"], 1], ["Bilangan berikut yang termasuk bilangan prima adalah ....", ["1", "4", "7", "9"], 2], ["Bilangan yang memiliki lebih dari dua faktor disebut bilangan ....", ["prima", "ganjil", "genap", "komposit"], 3], ["Mengapa bilangan 1 bukan bilangan prima maupun komposit?", ["Karena tidak memiliki faktor", "Karena hanya memiliki satu faktor", "Karena memiliki dua faktor", "Karena merupakan bilangan genap"], 1], ["Satu-satunya bilangan prima yang genap adalah ....", ["2", "4", "6", "8"], 0], ["Kelompok bilangan yang semuanya merupakan bilangan prima adalah ....", ["2, 3, 5", "3, 6, 7", "5, 9, 11", "1, 2, 3"], 0], ["Bilangan 15 termasuk bilangan komposit karena ....", ["hanya memiliki satu faktor", "tidak dapat dibagi 3", "memiliki faktor 1, 3, 5, dan 15", "merupakan bilangan genap"], 2], ["Faktor dari suatu bilangan adalah bilangan yang dapat membaginya ....", ["tanpa sisa", "dengan sisa 1", "hanya jika bilangan itu genap", "hanya jika bilangan itu prima"], 0], ["Berikut ini yang merupakan faktor dari 18 adalah ....", ["4", "5", "7", "6"], 3], ["Faktor dari 10 adalah ....", ["1, 2, 5, 10", "1, 3, 5, 10", "2, 4, 5, 10", "1, 2, 4, 10"], 0], ["Pasangan faktor yang hasil kalinya 24 adalah ....", ["3 dan 7", "4 dan 6", "5 dan 6", "2 dan 10"], 1], ["Bilangan berikut yang bukan faktor dari 20 adalah ....", ["2", "4", "5", "6"], 3], ["Faktor dari 12 yang paling besar adalah ....", ["3", "4", "6", "12"], 3], ["Pasangan faktor 18 yang tepat adalah ....", ["2 dan 8", "3 dan 6", "4 dan 5", "2 dan 7"], 1], ["Faktorisasi prima adalah cara menuliskan bilangan sebagai ....", ["penjumlahan bilangan genap", "perkalian bilangan prima saja", "pengurangan bilangan ganjil", "perkalian bilangan komposit saja"], 1], ["Faktorisasi prima dari 12 adalah ....", ["2 × 2 × 3", "2 × 3 × 3", "3 × 3 × 3", "2 × 2 × 2"], 0], ["Faktorisasi prima dari 18 adalah ....", ["2 × 2 × 3", "2 × 3 × 3", "3 × 3 × 3", "2 × 2 × 5"], 1], ["Faktorisasi prima dari 20 adalah ....", ["2 × 2 × 5", "2 × 3 × 3", "2 × 2 × 2", "3 × 3 × 5"], 0], ["Faktorisasi prima dari 30 adalah ....", ["2 × 2 × 5", "2 × 3 × 5", "3 × 3 × 3", "2 × 5 × 5"], 1], ["Pada pohon faktor, bilangan 12 diuraikan menjadi 3 × 4. Selanjutnya, 4 diuraikan menjadi ....", ["1 × 4", "2 × 2", "2 × 3", "1 × 3"], 1], ["Pada pohon faktor 20 = 2 × 10, bilangan 10 dapat diuraikan menjadi ....", ["2 × 5", "3 × 3", "2 × 4", "1 × 10"], 0], ["Faktor-faktor prima dari 28 adalah ....", ["2 × 2 × 7", "2 × 7 × 7", "4 × 7", "2 × 2 × 2 × 7"], 0], ["Faktorisasi prima dari 36 adalah ....", ["2 × 2 × 3 × 3", "2 × 3 × 3", "3 × 3 × 3", "2 × 2 × 2 × 3"], 0], ["Hasil perkalian 2 × 3 × 5 adalah ....", ["15", "20", "30", "35"], 2], ["Pernyataan yang benar tentang hasil akhir pohon faktor adalah ....", ["Semua ujung cabang harus bilangan komposit", "Semua ujung cabang harus bilangan prima", "Hasil perkalian tidak harus sama dengan bilangan awal", "Bilangan 1 harus selalu menjadi faktor prima"], 1]];
+/* acak urutan soal dan pilihan jawaban setiap permainan (kunci jawaban ikut berpindah) */
+function shuf(q){const o=q[1].map((t,k)=>({t,k}));for(let i=o.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[o[i],o[j]]=[o[j],o[i]]}return[q[0],o.map(x=>x.t),o.findIndex(x=>x.k===q[2])]}
+function pick(){let h=[];try{h=JSON.parse(localStorage.getItem("qc_used")||"[]")}catch(e){}
+let free=BANK.map((_,i)=>i).filter(i=>!h.includes(i));
+if(free.length<10){h=[];free=BANK.map((_,i)=>i)}
+free.sort(()=>Math.random()-.5);const ch=free.slice(0,10);
+try{localStorage.setItem("qc_used",JSON.stringify(h.concat(ch)))}catch(e){}
+return ch.map(i=>shuf(BANK[i]))}
+
+/* ===== MULAI + HITUNG MUNDUR 3-2-1 ===== */
+function start(){
+ const a=$("n1")?$("n1").value.trim():names[0],b=$("n2")?$("n2").value.trim():names[1];
+ if(!a||!b){$("err").textContent="Kedua nama wajib diisi!";return}
+ if(a.toLowerCase()===b.toLowerCase()){$("err").textContent="Nama tidak boleh sama!";return}
+ names=[a,b];
+ S={qs:pick(),i:0,life:[5,5],ok:[0,0],bad:[0,0],mode:"lock",who:-1,t:10,iv:null,brk:null};$("nx").classList.remove("on");
+ [0,1].forEach(p=>{$("pl"+(p+1)).innerHTML=IMG(p?"ikon-panel-merah":"ikon-panel-biru","","pl")+avImg(p,"normal","ch","","av"+(p+1))+`<div class="nm">${names[p].replace(/</g,"&lt;")}</div>`;setBell(p,"lock")});
+ $("ans").innerHTML="";$("qt").textContent="";$("stat").innerHTML="";hearts();
+ go("arena");countdown(()=>nextQ())}
+function countdown(cb){const c=$("cd");c.classList.add("on");let n=3;
+ const tick=()=>{c.innerHTML=`<span>${n>0?n:"MULAI!"}</span>`;sfx(n>0?600:1000,.25,"square",.1);if(n<0){c.classList.remove("on");cb();return}n--;setTimeout(tick,900)};tick()}
+
+/* ===== TAMPILAN ARENA ===== */
+function setBell(p,st){const b=$("b"+(p+1));b.innerHTML=IMG(st==="on"?"bel-aktif":st==="press"?"bel-tertekan":"bel-terkunci","🔔");b.disabled=st!=="on";b.classList.toggle("on",st==="on")}
+function expr(p,e){const el=$("av"+(p+1));if(el&&el.tagName==="IMG"){el.src=P(`${AV[SEL[p]][0]}-${e}`);el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop")}}
+function hearts(){[0,1].forEach(p=>{let h="";for(let k=0;k<5;k++){
+ if(k<S.life[p])h+=`<div class="h">${IMG(S.life[p]===1?"ikon-hati-retak":"ikon-hati-penuh","❤️")}</div>`;
+ else if(S.brk&&S.brk[0]===p&&S.brk[1]===k)h+=`<div class="h br">${IMG("ikon-hati-pecah","💔")}</div>`;
+ else h+=`<div class="h dim">${IMG("ikon-hati-penuh","❤️")}</div>`}
+ $("h"+(p+1)).innerHTML=h;$("s"+(p+1)).textContent=`Benar ${S.ok[p]} • Salah ${S.bad[p]}`})}
+function setStat(t,name,p){const e=$("stat");const B={turn:"banner-giliran",ok:"banner-benar",no:"banner-salah",out:"banner-waktu-habis"};
+ if(t==="wait")e.innerHTML=`<div class="pill">MENUNGGU BUZZER</div>`;
+ else e.innerHTML=IMG(B[t],{turn:"GILIRAN",ok:"JAWABAN BENAR",no:"JAWABAN SALAH",out:"WAKTU HABIS"}[t])+(t==="turn"?`<div class="pill p${p+1}" style="font-size:30px;padding:2px 26px">${name.replace(/</g,"&lt;")}</div>`:"")}
+function nextQ(){
+ sfx(660,.12,"triangle",.1);
+ if(S.life[0]<=0||S.life[1]<=0||S.i>=10)return end();
+ $("nx").classList.remove("on");$("stat").classList.remove("wn");const q=S.qs[S.i];S.mode="wait";S.who=-1;S.cur=q;S.brk=null;
+ $("no").textContent=`SOAL ${S.i+1}/10`;$("qn").textContent=`SOAL ${String(S.i+1).padStart(2,"0")}`;$("qt").textContent=q[0];fitQ();
+ $("ans").innerHTML=q[1].map((x,k)=>`<button class="ab" disabled onclick="pickA(${k})">${IMG("tombol-"+"abcd"[k],"","")}<span class="t">${x}</span></button>`).join("");
+ $("tmv").textContent="10";$("tm").classList.remove("lo");
+ [0,1].forEach(p=>{setBell(p,"on");expr(p,"normal");$("t"+(p+1)).textContent="";$("pp"+(p+1)).classList.remove("act")});
+ setStat("wait");hearts();fitAns()}
+function fitQ(){const p=$("qt");let f=54;p.style.fontSize=f+"px";while(p.scrollHeight>p.clientHeight+1&&f>26){f-=2;p.style.fontSize=f+"px"}}
+function fitAns(){document.querySelectorAll(".ab .t").forEach(t=>{let f=40;t.style.fontSize=f+"px";while(t.scrollHeight>t.clientHeight+1&&f>24){f-=2;t.style.fontSize=f+"px"}})}
+
+/* ===== MEKANISME BUZZER (terkunci) ===== */
+function buzz(p){
+ if(S.mode!=="wait")return;S.mode="turn";S.who=p;
+ setBell(p,"press");setBell(1-p,"lock");
+ $("t"+(p+1)).textContent="BEL TERTEKAN!";$("pp"+(p+1)).classList.add("act");
+ setStat("turn",names[p],p);sfx(880,.3,"square");sfx(1320,.5,"sine",.2);
+ document.querySelectorAll(".ab").forEach(b=>b.disabled=false);
+ S.t=10;$("tmv").textContent=10;
+ clearInterval(S.iv);S.iv=setInterval(()=>{S.t--;$("tmv").textContent=S.t;if(S.t<=3){$("tm").classList.add("lo");sfx(300,.1,"square",.08)}else sfx(1500,.03,"triangle",.05);if(S.t<=0){clearInterval(S.iv);resolve(-1)}},1000)}
+function pickA(k){if(S.mode!=="turn")return;clearInterval(S.iv);sfx(980,.08,"square",.1);resolve(k)}
+
+/* ===== EFEK ANIMASI ===== */
+const CX=[280,1640];
+function fxi(n,fb,w,x,y,anim,dur,opt={}){const d=document.createElement("div");d.className="fxi";d.style.cssText=`left:${x}px;top:${y}px;width:${w}px`;d.innerHTML=IMG(n,fb,"","width:100%");$("arena").appendChild(d);
+ const a=d.animate(anim,{duration:dur,easing:"ease-out",fill:"forwards",...opt});a.onfinish=()=>{d.remove();opt.cb&&opt.cb()};return d}
+function shake(){const a=$("arena");a.classList.remove("shk");void a.offsetWidth;a.classList.add("shk")}
+function boom(p){fxi("fx-ledakan","💥",380,CX[p]-190,260,[{transform:"scale(.3)",opacity:1},{transform:"scale(1.1)",opacity:1,offset:.5},{transform:"scale(1.3)",opacity:0}],800);shake();sfx(120,.4,"sawtooth",.2)}
+function shards(p){fxi("fx-serpihan-hati","💔",320,CX[p]-160,280,[{transform:"scale(.4)",opacity:1},{transform:"scale(1.2)",opacity:0}],900);sfx(260,.3,"triangle",.15)}
+function attack(p,o,cb){const left=p===0;const w=300;noiseSfx(300,2400,.5,"bandpass",.3);
+ const x0=left?200:1420,x1=left?1340:130,fl=left?1:-1;
+ fxi(left?"fx-bola-biru":"fx-bola-merah","⚡",w,0,420,[{transform:`translateX(${x0}px) scaleX(${fl})`},{transform:`translateX(${x1}px) scaleX(${fl})`}],650,{easing:"ease-in",cb});sfx(700,.5,"sawtooth",.08)}
+function verdict(ok){fxi(ok?"fx-centang":"fx-silang",ok?"✅":"❌",200,1105,120,[{transform:"scale(.3)",opacity:0},{transform:"scale(1.1)",opacity:1,offset:.35},{transform:"scale(1)",opacity:1,offset:.75},{transform:"scale(1)",opacity:0}],1500)}
+
+/* ===== PENILAIAN ===== */
+function resolve(k){
+ S.mode="lock";const p=S.who,o=1-p,c=S.cur[2];
+ document.querySelectorAll(".ab").forEach((b,j)=>{b.disabled=false;b.style.pointerEvents="none";if(j===c)b.classList.add("c");else if(j===k){b.classList.add("w")}else b.style.filter="brightness(.75) grayscale(.3)"});
+ setBell(p,"lock");
+ if(k===c){S.ok[p]++;S.life[o]--;S.brk=[o,S.life[o]];setStat("ok");seq([523,659,784]);expr(p,"senang");verdict(true);
+  attack(p,o,()=>{boom(o);expr(o,"sedih");hearts()})}
+ else{if(k>=0)S.bad[p]++;S.life[p]--;S.brk=[p,S.life[p]];setStat(k<0?"out":"no");seq([300,220]);expr(p,"sedih");verdict(false);
+  setTimeout(()=>{shards(p);shake();hearts()},300)}
+ setTimeout(showNx,1400)}
+/* tombol LANJUT: pemain/guru yang memutuskan kapan soal berikutnya muncul */
+function showNx(){const last=S.life[0]<=0||S.life[1]<=0||S.i>=9;$("nx").textContent=last?"LIHAT HASIL ▶":"LANJUT ▶";$("nx").classList.add("on");$("stat").classList.add("wn");S.mode="next";sfx(740,.12)}
+function goNext(){if(S.mode!=="next")return;S.mode="lock";$("nx").classList.remove("on");sfx(500,.08);S.i++;nextQ()}
+
+/* ===== HALAMAN HASIL ===== */
+function end(){
+ const[a,b]=S.life;let w=-1;
+ if(a!==b)w=a>b?0:1;else if(S.ok[0]!==S.ok[1])w=S.ok[0]>S.ok[1]?0:1;
+ const l=w<0?-1:1-w;
+ const ch=(p,e,st)=>avImg(p,e,"ch",st);
+ let stg;
+ if(w<0)stg=`${IMG("podium","🏆","pod")}${ch(0,"senang","left:300px;bottom:190px;height:250px")}${ch(1,"senang","left:830px;bottom:190px;height:250px")}`;
+ else stg=`${IMG("podium","🏆","pod")}${IMG("fx-aura","","aura")}${ch(w,"senang","left:535px;bottom:290px;height:240px;z-index:3")}${ch(l,"sedih","left:322px;bottom:205px;height:200px;z-index:3")}`;
+ const card=p=>`<div class="rc p${p+1} ${w===p?"w":""}">${names[p].replace(/</g,"&lt;")}<br>Nyawa: ${S.life[p]>0?IMG("ikon-hati-penuh","❤️").repeat(S.life[p]):"0"}<br>Benar: ${S.ok[p]} • Salah: ${S.bad[p]}</div>`;
+ $("p5").innerHTML=`${IMG("fx-konfeti","","fall")}${IMG("fx-kembang-api","🎆","fw","left:20px;top:60px")}${IMG("fx-kembang-api","🎆","fw","right:20px;top:60px;left:auto;animation-delay:-.9s")}
+ ${IMG(w<0?"banner-seri":"banner-pemenang",w<0?"SERI":"PEMENANG","bn")}
+ <div class="stg">${stg}${IMG("ikon-piala","🏆","tr")}${IMG("ikon-medali","🏅","md")}${IMG("ikon-mahkota","👑","cr")}</div>
+ <div class="res">${card(0)}${card(1)}</div>
+ <div class="acts"><button class="btn g pulse" onclick="start()">MAIN LAGI</button><button class="btn" onclick="buildIds();go('p3')">GANTI PEMAIN</button></div>`;
+ go("p5");seq([523,659,784,1047]);
+ for(let i=0;i<70;i++){const e=document.createElement("div");e.className="pt";e.style.left=Math.random()*1900+"px";e.style.top="-30px";e.style.background=["#ffc83d","#2f6bff","#ff3b4e","#22d081","#8a4dff"][i%5];e.style.animationDelay=Math.random()*1.5+"s";$("p5").appendChild(e);setTimeout(()=>e.remove(),5000)}}
+
+/* ===== KEYBOARD: Q = Player 1, P = Player 2 ===== */
+addEventListener("keydown",e=>{if(!$("arena").classList.contains("on"))return;const k=e.key.toLowerCase();if(k==="q")buzz(0);if(k==="p")buzz(1);if(k==="enter"||k===" "){e.preventDefault();goNext()}});
+</script></body></html>
